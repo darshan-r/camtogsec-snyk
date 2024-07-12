@@ -39,29 +39,58 @@ for project in all_projects:
     issue_set = project.issueset_aggregated.all()
 
 lst_output = []
+
+temp = 5
 for v in issue_set.issues:
-    print("\n %s" % v.issueData.title)
-    print("  id: %s" % v.id)
-    print("  url: %s" % v.issueData.url)
+    temp -= 1
+    if temp == 0:
+        break
+    
+    print(f'id = {v.id}')
+    print(f'issueType = {v.issueType}')
+    print(f'pkgName = {v.pkgName}')
+    print(f'pkgVersions = {v.pkgVersions}')
+    # print(f'issueData = {v.issueData}')
+    print(f'isPatched = {v.isPatched}')
+    print(f'isIgnored = {v.isIgnored}')
+    # print(f'fixInfo = {v.fixInfo}')
+    print(f'introducedThrough = {v.introducedThrough}')
+    print(f'ignoreReasons = {v.ignoreReasons}')
+    print(f'priorityScore = {v.priorityScore}')
+    print(f'priority = {v.priority}')
 
-    print("  %s@%s" % (v.pkgName, v.pkgVersions))
-    print("  Severity: %s" % v.issueData.severity)
-    print("  CVSS Score: %s" % v.issueData.cvssScore)
+    #Issue data
+    print(f'id = {v.issueData.id}')
+    print(f'title = {v.issueData.title}')
+    print(f'severity = {v.issueData.severity}')
+    print(f'url = {v.issueData.url}')
+    print(f'exploitMaturity = {v.issueData.exploitMaturity}')
+    print(f'description = {v.issueData.description}')
+    print(f'identifiers = {v.issueData.identifiers}')
+    print(f'credit = {v.issueData.credit}')
+    print(f'semver = {v.issueData.semver}')
+    print(f'publicationTime = {v.issueData.publicationTime}')
+    print(f'disclosureTime = {v.issueData.disclosureTime}')
+    print(f'CVSSv3 = {v.issueData.CVSSv3}')
+    print(f'cvssScore = {v.issueData.cvssScore}')
+    print(f'cvssDetails = {v.issueData.cvssDetails}')
+    print(f'language = {v.issueData.language}')
+    print(f'patches = {v.issueData.patches}')
+    print(f'nearestFixedInVersion = {v.issueData.nearestFixedInVersion}')
+    print(f'ignoreReasons = {v.issueData.ignoreReasons}')
 
-    # print CVSS assigners if exists
-    for detail in v.issueData.cvssDetails:
-        print("    %s score: %s" % (detail['assigner'], detail['cvssV3BaseScore']))
+    print('-----------------------------------------------------')
 
     # for the excel output
-    new_output_item = {
-        "title": v.issueData.title,
-        "id": v.id,
-        "url": v.issueData.url,
-        "package": "%s@%s" % (v.pkgName, v.pkgVersions),
-        "severity": v.issueData.severity,
-        "cvssScore": v.issueData.cvssScore,
-    }
-    lst_output.append(new_output_item)
+    # new_output_item = {
+    #     "title": v.issueData.title,
+    #     "id": v.id,
+    #     "url": v.issueData.url,
+    #     "package": "%s@%s" % (v.pkgName, v.pkgVersions),
+    #     "severity": v.issueData.severity,
+    #     "cvssScore": v.issueData.cvssScore,
+    # }
+    # lst_output.append(new_output_item)
 
 
-output_excel(lst_output, "snyk_aggregator_output.xlsx")
+# output_excel(lst_output, "snyk_aggregator_output.xlsx")
