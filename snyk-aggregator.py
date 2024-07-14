@@ -1,5 +1,6 @@
 import xlsxwriter
 from snyk import SnykClient
+from datetime import datetime
 
 
 snyk_token = 'YOUR SYNK API KEY'
@@ -31,66 +32,23 @@ def output_excel(vulns, output_path):
 
     excel_workbook.close()
 
+rest_client = SnykClient(snyk_token, version="2024-06-21", url="https://api.snyk.io/rest")
 
-client = SnykClient(snyk_token)
-all_projects = client.organizations.get(org_id).projects.all()
-
-for project in all_projects:
-    issue_set = project.issueset_aggregated.all()
+params = {"limit": 100}
+all_orgs = rest_client.get_rest_pages(f"orgs", params=params)
 
 lst_output = []
+for org in all_orgs:
+    issues = rest_client.get_rest_pages(f"orgs/{org['id']}/issues", params=params)
 
-temp = 5
-for v in issue_set.issues:
-    temp -= 1
-    if temp == 0:
-        break
-    
-    print(f'id = {v.id}')
-    print(f'issueType = {v.issueType}')
-    print(f'pkgName = {v.pkgName}')
-    print(f'pkgVersions = {v.pkgVersions}')
-    # print(f'issueData = {v.issueData}')
-    print(f'isPatched = {v.isPatched}')
-    print(f'isIgnored = {v.isIgnored}')
-    # print(f'fixInfo = {v.fixInfo}')
-    print(f'introducedThrough = {v.introducedThrough}')
-    print(f'ignoreReasons = {v.ignoreReasons}')
-    print(f'priorityScore = {v.priorityScore}')
-    print(f'priority = {v.priority}')
-
-    #Issue data
-    print(f'id = {v.issueData.id}')
-    print(f'title = {v.issueData.title}')
-    print(f'severity = {v.issueData.severity}')
-    print(f'url = {v.issueData.url}')
-    print(f'exploitMaturity = {v.issueData.exploitMaturity}')
-    print(f'description = {v.issueData.description}')
-    print(f'identifiers = {v.issueData.identifiers}')
-    print(f'credit = {v.issueData.credit}')
-    print(f'semver = {v.issueData.semver}')
-    print(f'publicationTime = {v.issueData.publicationTime}')
-    print(f'disclosureTime = {v.issueData.disclosureTime}')
-    print(f'CVSSv3 = {v.issueData.CVSSv3}')
-    print(f'cvssScore = {v.issueData.cvssScore}')
-    print(f'cvssDetails = {v.issueData.cvssDetails}')
-    print(f'language = {v.issueData.language}')
-    print(f'patches = {v.issueData.patches}')
-    print(f'nearestFixedInVersion = {v.issueData.nearestFixedInVersion}')
-    print(f'ignoreReasons = {v.issueData.ignoreReasons}')
-
-    print('-----------------------------------------------------')
-
-    # for the excel output
-    # new_output_item = {
-    #     "title": v.issueData.title,
-    #     "id": v.id,
-    #     "url": v.issueData.url,
-    #     "package": "%s@%s" % (v.pkgName, v.pkgVersions),
-    #     "severity": v.issueData.severity,
-    #     "cvssScore": v.issueData.cvssScore,
-    # }
-    # lst_output.append(new_output_item)
+    for issue in issues:
+        new_output_item = {
+            "title": issue["title"],
+            "severity": issue["severity"],
+            "introduced_date": datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
+            "issue_status": issue["status"],
+        }
+        lst_output.append(new_output_item)
 
 
-# output_excel(lst_output, "snyk_aggregator_output.xlsx")
+output_excel(lst_output, "snyk_aggregator_output.xlsx")
