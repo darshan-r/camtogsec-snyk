@@ -43,12 +43,12 @@ for org in all_orgs:
 
     for issue in issues:
         new_output_item = {
-            "title": issue["title"],
-            "severity": issue["severity"],
-            "introduced_date": datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
-            "issue_status": issue["status"],
+            "Issue_Title": issue["title"],
+            "Severity": issue["severity"],
+            "Introduced_Date": datetime.strptime(issue["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
+            "Issue_Status": issue["status"],
+            "Org_Name": org["attributes"]["name"],
         }
         lst_output.append(new_output_item)
-
 
 output_excel(lst_output, "snyk_aggregator_output.xlsx")
