@@ -45,7 +45,7 @@ for org in all_orgs:
         new_output_item = {
             "Issue_Title": issue['attributes']["title"],
             "Severity": issue['attributes']["effective_severity_level"],
-            "Introduced_Date": datetime.strptime(issue['attributes']["created_at"], "%Y-%m-%dT%H:%M:%SZ"),
+            "Introduced_Date": datetime.strptime(issue['attributes']["created_at"], "%Y-%m-%dT%H:%M:%S.%fZ"),
             "Issue_Status": issue['attributes']["status"],
             "Org_Name": org["attributes"]["name"],
         }
