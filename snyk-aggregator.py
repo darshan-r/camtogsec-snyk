@@ -1,10 +1,16 @@
 import xlsxwriter
 from snyk import SnykClient
-from datetime import datetime
+from dateutil import parser
 
 
 snyk_token = 'YOUR SYNK API KEY'
 org_id = 'YOUR ORG ID'
+
+def parse_date(time_string):
+    # Use dateutil.parser to automatically parse the time string
+    parsed_time = parser.isoparse(time_string)
+    # Extract and return only the date part
+    return parsed_time.date()
 
 def output_excel(vulns, output_path):
     excel_workbook = xlsxwriter.Workbook(output_path)
@@ -45,7 +51,7 @@ for org in all_orgs:
         new_output_item = {
             "Issue_Title": issue['attributes']["title"],
             "Severity": issue['attributes']["effective_severity_level"],
-            "Introduced_Date": datetime.strptime(issue['attributes']["created_at"], "%Y-%m-%dT%H:%M:%S.%fZ"),
+            "Introduced_Date": parse_date(issue['attributes']["created_at"]),
             "Issue_Status": issue['attributes']["status"],
             "Org_Name": org["attributes"]["name"],
         }
