@@ -1,7 +1,7 @@
 import xlsxwriter
 from snyk import SnykClient
 from dateutil import parser
-
+from datetime import datetime
 
 snyk_token = 'YOUR SYNK API KEY'
 org_id = 'YOUR ORG ID'
@@ -57,4 +57,6 @@ for org in all_orgs:
         }
         lst_output.append(new_output_item)
 
-output_excel(lst_output, "snyk_aggregator_output.xlsx")
+current_date = datetime.now().strftime("%Y-%m-%d")
+
+output_excel(lst_output, f"snyk_report_{current_date}.xlsx")
