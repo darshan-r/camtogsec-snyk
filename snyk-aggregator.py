@@ -2,6 +2,7 @@ import xlsxwriter
 from snyk import SnykClient
 from dateutil import parser
 from datetime import datetime
+import os
 
 snyk_token = 'YOUR SYNK API KEY'
 org_id = 'YOUR ORG ID'
@@ -13,6 +14,11 @@ def parse_date(time_string):
     return parsed_time.date()
 
 def output_excel(vulns, output_path):
+    # Delete file if already exists
+    try:
+        os.remove(output_path)
+    except:
+        pass
     excel_workbook = xlsxwriter.Workbook(output_path)
     excel_worksheet = excel_workbook.add_worksheet()
     format_bold = excel_workbook.add_format({"bold": True})
