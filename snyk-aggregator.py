@@ -7,6 +7,10 @@ import os
 snyk_token = 'YOUR SYNK API KEY'
 org_id = 'YOUR ORG ID'
 
+# Synk Open Source = package_vulnerability
+# Synk Code = code
+type_filter = ['package_vulnerability', 'code']
+
 def parse_date(time_string):
     # Use dateutil.parser to automatically parse the time string
     parsed_time = parser.isoparse(time_string)
@@ -46,22 +50,27 @@ def output_excel(vulns, output_path):
 
 rest_client = SnykClient(snyk_token, version="2024-06-21", url="https://api.snyk.io/rest")
 
-params = {"limit": 100}
+params = {"limit": 100,}
 all_orgs = rest_client.get_rest_pages(f"orgs", params=params)
 
 lst_output = []
-for org in all_orgs:
-    issues = rest_client.get_rest_pages(f"orgs/{org['id']}/issues", params=params)
+if type_filter == []:
+    type_filter = ['']
+for issue_type in type_filter:
+    params["type"] = issue_type
 
-    for issue in issues:
-        new_output_item = {
-            "Issue_Title": issue['attributes']["title"],
-            "Severity": issue['attributes']["effective_severity_level"],
-            "Introduced_Date": parse_date(issue['attributes']["created_at"]),
-            "Issue_Status": issue['attributes']["status"],
-            "Org_Name": org["attributes"]["name"],
-        }
-        lst_output.append(new_output_item)
+    for org in all_orgs:
+        issues = rest_client.get_rest_pages(f"orgs/{org['id']}/issues", params=params)
+
+        for issue in issues:
+            new_output_item = {
+                "Issue_Title": issue['attributes']["title"],
+                "Severity": issue['attributes']["effective_severity_level"],
+                "Introduced_Date": parse_date(issue['attributes']["created_at"]),
+                "Issue_Status": issue['attributes']["status"],
+                "Org_Name": org["attributes"]["name"],
+            }
+            lst_output.append(new_output_item)
 
 current_date = datetime.now().strftime("%Y-%m-%d")
 
