@@ -11,6 +11,9 @@ org_id = 'YOUR ORG ID'
 # Synk Code = code
 type_filter = ['package_vulnerability', 'code']
 
+# Define your "created after" date here (in yyyy-mm-dd format)
+created_after_date = '2023-09-07'
+
 def parse_date(time_string):
     # Use dateutil.parser to automatically parse the time string
     parsed_time = parser.isoparse(time_string)
@@ -51,6 +54,8 @@ def output_excel(vulns, output_path):
 rest_client = SnykClient(snyk_token, version="2024-06-21", url="https://api.snyk.io/rest")
 
 params = {"limit": 100,}
+params["created_after"] = created_after_date
+
 all_orgs = rest_client.get_rest_pages(f"orgs", params=params)
 
 lst_output = []
