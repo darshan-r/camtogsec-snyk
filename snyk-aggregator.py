@@ -65,6 +65,10 @@ for issue_type in type_filter:
     params["type"] = issue_type
 
     for org in all_orgs:
+        # Skip a specific org (AppSecTest)
+        if org['id'] == '0ed59c2a-3cbe-4c5c-aded-e3976deb1ace':
+            continue
+
         issues = rest_client.get_rest_pages(f"orgs/{org['id']}/issues", params=params)
 
         for issue in issues:
